@@ -8,6 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LikeController extends Controller
 {
+    /**
+     * Create a new LikeController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('jwt');
+    }
+
     public function likeIt(Reply $reply) {
         $reply->like()->create([
             // 'user_id' => auth()->id
