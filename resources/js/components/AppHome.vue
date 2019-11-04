@@ -1,6 +1,7 @@
 <template>
     <div>
         <Toolbar></Toolbar>
+        <router-view></router-view>
         <AppFooter></AppFooter>
     </div>
 </template>
