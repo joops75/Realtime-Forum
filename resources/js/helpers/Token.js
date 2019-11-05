@@ -1,7 +1,7 @@
 class Token {
     isValid(token) {
         const payload = this.payload(token);
-        return payload && (payload.iss === `${process.env.MIX_APP_URL}/api/auth/login` || payload.iss === `${process.env.MIX_APP_URL}/api/auth/register`);
+        return payload && (payload.iss === `${process.env.MIX_APP_URL}/api/auth/login` || payload.iss === `${process.env.MIX_APP_URL}/api/auth/signup`);
     }
 
     payload(token) {

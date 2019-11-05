@@ -1,11 +1,18 @@
 import Token from './Token';
 import AppStorage from './AppStorage';
+import { router } from '../router/router';
 
 class User {
     login(form) {
-        axios.post('api/auth/login', form)
+        return axios.post('api/auth/login', form)
             .then(res => this.responseAfterLogin(res))
-            .catch(err => console.log(err.response.data));
+            .catch(err => err.response.data);
+    }
+
+    signup(form) {
+        return axios.post('api/auth/signup', form)
+            .then(res => this.responseAfterLogin(res))
+            .catch(err => err.response.data);
     }
 
     responseAfterLogin(res) {
@@ -14,6 +21,8 @@ class User {
 
         if (Token.isValid(access_token)) {
             AppStorage.store(username, access_token);
+            router.push('/forum');
+            EventBus.$emit('login');
         }
     }
 
@@ -28,6 +37,8 @@ class User {
 
     logout() {
         AppStorage.clear();
+        router.push('/forum');
+        EventBus.$emit('logout');
     }
 
     name() {

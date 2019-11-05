@@ -1,6 +1,8 @@
 <template>
     <v-container>
         <v-form @submit.prevent="login">
+            <span class="red--text" v-if="error">{{ error }}</span>
+
             <v-text-field
                 label="E-mail"
                 v-model="form.email"
@@ -30,12 +32,23 @@ export default {
             form: {
                 email: null,
                 password: null
-            }
+            },
+            error: null
+        }
+    },
+    created() {
+        if (User.loggedIn()) {
+            this.$router.push('forum');
         }
     },
     methods: {
-        login() {
-            User.login(this.form);
+        async login() {
+            const res = await User.login(this.form);
+            if (res && res.hasOwnProperty('error')) {
+                this.error = res.error;
+            } else {
+                this.error = null;
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SignupRequest;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -29,20 +30,20 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Login credentials are incorrect.'], 401);
         }
 
         return $this->respondWithToken($token);
     }
 
-    public function signup()
+    public function signup(SignupRequest $request)
     {
         $credentials = request(['name', 'email', 'password']);
         $credentials['password'] = Hash::make($credentials['password']);
 
         User::create($credentials);
         
-        return $this->login($credentials);
+        return $this->login($request);
     }
 
     /**
