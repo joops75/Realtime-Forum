@@ -52,6 +52,10 @@ class User {
             return Token.payload(AppStorage.getToken()).sub;
         }
     }
+
+    userIsOwner(id) {
+        return this.id() == id;
+    }
 }
 
 export default User = new User();

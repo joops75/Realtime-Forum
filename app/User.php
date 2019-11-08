@@ -40,7 +40,7 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     public function question() {
-        $this->hasMany(Question::class);
+        return $this->hasMany(Question::class);
     }
 
     /**

@@ -4,10 +4,19 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use App\User;
+use Illuminate\Support\Str;
 // don't need to state Reply and Category models here as they are in the same folder as this file
 
 class Question extends Model
 {
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($question) {
+            $question->slug = Str::slug($question->title);
+        });
+    }
     /**
      * Get the route key for the model.
      *
@@ -34,7 +43,6 @@ class Question extends Model
 
     public function getPathAttribute() {
         // function accessed via $this->path
-        // asset function appends base url to passed in string
-        return asset("api/question/$this->slug");
+        return "/question/$this->slug";
     }
 }
