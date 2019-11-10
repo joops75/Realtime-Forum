@@ -6,6 +6,8 @@
         <v-spacer></v-spacer>
         <div class="hidden-sm-and-down">
 
+            <v-btn flat v-show="show()" @click="showDialog">Ask Question</v-btn>
+
             <router-link v-for="item in items" :key="item.title" :to="item.to" v-show="item.show">
                 <v-btn flat>{{ item.title }}</v-btn>
             </router-link>
@@ -30,12 +32,17 @@ export default {
         getItems() {
             return [
                 { title: 'Forum', to: '/forum', show: true },
-                { title: 'Ask Question', to: '/ask', show: User.loggedIn() },
-                { title: 'Category', to: '/category', show: User.loggedIn() },
-                { title: 'Signup', to: '/signup', show: !User.loggedIn() },
-                { title: 'Login', to: '/login', show: !User.loggedIn() },
-                { title: 'Logout', to: '/logout', show: User.loggedIn() }
+                { title: 'Category', to: '/category', show: this.show() },
+                { title: 'Signup', to: '/signup', show: !this.show() },
+                { title: 'Login', to: '/login', show: !this.show() },
+                { title: 'Logout', to: '/logout', show: this.show() }
             ];
+        },
+        show() {
+            return User.loggedIn();
+        },
+        showDialog() {
+            EventBus.$emit('showCreateEditModal');
         }
     }
 }

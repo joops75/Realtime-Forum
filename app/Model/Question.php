@@ -16,6 +16,10 @@ class Question extends Model
         static::creating(function ($question) {
             $question->slug = Str::slug($question->title);
         });
+
+        static::updating(function ($question) {
+            $question->slug = Str::slug($question->title);
+        });
     }
     /**
      * Get the route key for the model.
@@ -27,7 +31,7 @@ class Question extends Model
         return 'slug';
     }
 
-    protected $guarded = [];
+    protected $fillable = ['title', 'slug', 'body', 'user_id', 'category_id'];
 
     public function user() {
         return $this->belongsTo(User::class);

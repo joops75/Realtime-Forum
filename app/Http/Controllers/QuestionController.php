@@ -6,6 +6,7 @@ use App\Model\Question;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\QuestionResource;
+use Illuminate\Support\Str;
 
 class QuestionController extends Controller
 {
@@ -62,7 +63,7 @@ class QuestionController extends Controller
     public function update(Request $request, Question $question)
     {
         $question->update($request->all());
-        return response('updated', Response::HTTP_ACCEPTED);
+        return response(['path' => '/question/' . Str::slug($request->title)], Response::HTTP_ACCEPTED);
     }
 
     /**

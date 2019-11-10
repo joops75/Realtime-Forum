@@ -17,7 +17,7 @@
             <v-card-text v-html="body"></v-card-text>
 
             <v-card-actions v-if="canEdit">
-                <v-btn icon>
+                <v-btn icon @click="showDialog">
                     <v-icon color="orange">edit</v-icon>
                 </v-btn>
                 <v-btn icon @click="destroy">
@@ -37,9 +37,7 @@ export default {
     },
     created() {
         axios.get(`/api/question/${this.$route.params.slug}`)
-            .then(res => {
-                this.question = res.data.data;
-            })
+            .then(res => this.question = res.data.data)
             .catch(err => console.log(err.response.data));
     },
     computed: {
@@ -55,6 +53,9 @@ export default {
             axios.delete(`/api/question/${this.question.slug}`)
                 .then(() => this.$router.push('/forum'))
                 .catch(err => console.log(err.response.data));
+        },
+        showDialog() {
+            EventBus.$emit('showCreateEditModal', this.question);
         }
     }
 }
