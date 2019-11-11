@@ -21,6 +21,7 @@ class User {
 
         if (Token.isValid(access_token)) {
             AppStorage.store(username, access_token);
+            window.axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
             router.push('/forum');
             EventBus.$emit('login');
         }
