@@ -63,7 +63,7 @@ class QuestionController extends Controller
     public function update(Request $request, Question $question)
     {
         $question->update($request->all());
-        return response(['path' => '/question/' . Str::slug($request->title)], Response::HTTP_ACCEPTED);
+        return response(new QuestionResource($question), Response::HTTP_ACCEPTED);
     }
 
     /**
