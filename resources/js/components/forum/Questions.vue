@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card v-for="question in questions" :key="question.title">
+        <v-card class="mt-2" v-for="question in questions" :key="question.title">
             <v-card-title primary-title>
                 <div>
                     <h3 class="headline mb-0">
