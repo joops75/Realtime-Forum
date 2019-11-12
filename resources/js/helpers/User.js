@@ -57,6 +57,11 @@ class User {
     userIsOwner(id) {
         return this.id() == id;
     }
+
+    isAdmin() {
+        const adminIds = JSON.parse(process.env.MIX_ADMIN_IDS);
+        return adminIds.indexOf(this.id()) !== -1;
+    }
 }
 
 export default User = new User();

@@ -32,7 +32,7 @@ export default {
         getItems() {
             return [
                 { title: 'Forum', to: '/forum', show: true },
-                { title: 'Category', to: '/category', show: this.show() },
+                { title: 'Category', to: '/category', show: User.isAdmin() },
                 { title: 'Signup', to: '/signup', show: !this.show() },
                 { title: 'Login', to: '/login', show: !this.show() },
                 { title: 'Logout', to: '/logout', show: this.show() }
