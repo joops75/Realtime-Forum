@@ -6,7 +6,7 @@
         <v-spacer></v-spacer>
         <div class="hidden-sm-and-down">
 
-            <v-btn flat v-show="show()" @click="showDialog">Ask Question</v-btn>
+            <v-btn flat v-show="show()" @click="showQuestionModal">Ask Question</v-btn>
 
             <router-link v-for="item in items" :key="item.title" :to="item.to" v-show="item.show">
                 <v-btn flat>{{ item.title }}</v-btn>
@@ -41,8 +41,8 @@ export default {
         show() {
             return User.loggedIn();
         },
-        showDialog() {
-            EventBus.$emit('showCreateEditModal');
+        showQuestionModal() {
+            EventBus.$emit('showQuestionModal');
         }
     }
 }

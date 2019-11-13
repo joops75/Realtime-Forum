@@ -55,7 +55,7 @@ export default {
         }
     },
     created() {
-        EventBus.$on('showCreateEditModal', question => {
+        EventBus.$on('showQuestionModal', question => {
             this.getCategories();
             this.question = question || { body: '' };
             this.mode = question ? 'Edit' : 'Create';

@@ -39,7 +39,7 @@ class ReplyController extends Controller
     public function store(Request $request, Question $question)
     {
         $reply = $question->replies()->create($request->all());
-        return response(['reply' => new ReplyResource($reply)], Response::HTTP_CREATED);
+        return response(new ReplyResource($reply), Response::HTTP_CREATED);
     }
 
     /**
@@ -63,7 +63,7 @@ class ReplyController extends Controller
     public function update(Request $request, Question $question, Reply $reply)
     {
         $reply->update($request->all());
-        return response('updated', Response::HTTP_ACCEPTED);
+        return response(new ReplyResource($reply), Response::HTTP_ACCEPTED);
     }
 
     /**

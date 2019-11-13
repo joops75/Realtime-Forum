@@ -1,35 +1,50 @@
 <template>
-    <v-card v-if="question">
-        <v-container fluid>
-            <v-card-title>
-                <div>
-                    <div class="headline">
-                        {{ question.title }}
+    <div v-if="question">
+        <v-card>
+            <v-container fluid>
+                <v-card-title>
+                    <div>
+                        <div class="headline">
+                            {{ question.title }}
+                        </div>
+                        <span class="grey--text">Posted by {{ question.username }} {{ question.created_at }}</span>
                     </div>
-                    <span class="grey--text">Posted by {{ question.username }} {{ question.created_at }}</span>
-                </div>
 
-                <v-spacer></v-spacer>
+                    <v-spacer />
 
-                <v-btn color="teal">5 replies</v-btn>
-            </v-card-title>
+                    <v-card color="teal">
+                        <v-card-text class="font-weight-bold white--text">{{ question.reply_count }} replies</v-card-text>
+                    </v-card>
+                </v-card-title>
 
-            <v-card-text v-html="body"></v-card-text>
+                <v-card-text v-html="body"></v-card-text>
 
-            <v-card-actions v-if="canEdit">
-                <v-btn icon @click="showDialog">
-                    <v-icon color="orange">edit</v-icon>
-                </v-btn>
-                <v-btn icon @click="destroy">
-                    <v-icon color="red">delete</v-icon>
-                </v-btn>
-            </v-card-actions>
-        </v-container>
-    </v-card>
+                <v-card-actions>
+                    <v-btn v-if="loggedIn" color="green" @click="showReplyModal">Reply</v-btn>
+                    <v-btn v-if="canEdit" icon @click="showQuestionModal">
+                        <v-icon color="orange">edit</v-icon>
+                    </v-btn>
+                    <v-btn v-if="canEdit" icon @click="destroy">
+                        <v-icon color="red">delete</v-icon>
+                    </v-btn>
+                </v-card-actions>
+            </v-container>
+        </v-card>
+
+        <v-spacer />
+
+        <Replies :question="question" :replyCount="question.reply_count" />
+
+        <CreateEditReply />
+    </div>
 </template>
 
 <script>
+import Replies from '../reply/Replies';
+import CreateEditReply from '../modal/CreateEditReply';
+
 export default {
+    components: { Replies, CreateEditReply },
     data() {
         return {
             question: null
@@ -46,6 +61,9 @@ export default {
         },
         canEdit() {
             return User.userIsOwner(this.question.user_id);
+        },
+        loggedIn() {
+            return User.loggedIn();
         }
     },
     methods: {
@@ -54,8 +72,11 @@ export default {
                 .then(() => this.$router.push('/forum'))
                 .catch(err => console.log(err.response.data));
         },
-        showDialog() {
-            EventBus.$emit('showCreateEditModal', this.question);
+        showQuestionModal() {
+            EventBus.$emit('showQuestionModal', this.question);
+        },
+        showReplyModal() {
+            EventBus.$emit('showReplyModal', { question: this.question });
         }
     }
 }
