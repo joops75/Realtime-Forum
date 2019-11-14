@@ -2,7 +2,13 @@
     <v-container fluid v-if="replies.length">
         <h1>Replies</h1>
         <v-card class="mt-2" v-for="(reply, index) in replies" :key="reply.id">
-                <v-card-title class="grey--text">Posted by {{ reply.username }} {{ reply.created_at }}</v-card-title>
+                <v-card-title class="grey--text">
+                    <div>Posted by {{ reply.username }} {{ reply.created_at }}</div>
+
+                    <v-spacer />
+
+                    <Like :reply="reply" />
+                </v-card-title>
 
                 <v-divider />
 
@@ -26,7 +32,10 @@
 </template>
 
 <script>
+import Like from '../like/Like';
+
 export default {
+    components: { Like },
     props: ['question', 'replyCount'],
     data() {
         return {
