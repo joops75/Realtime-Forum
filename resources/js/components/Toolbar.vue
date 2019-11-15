@@ -3,7 +3,11 @@
         <router-link to="/">
             <v-toolbar-title>RT-Forum</v-toolbar-title>
         </router-link>
+
         <v-spacer></v-spacer>
+
+        <Notification />
+
         <div class="hidden-sm-and-down">
 
             <v-btn flat v-show="show()" @click="showQuestionModal">Ask Question</v-btn>
@@ -17,7 +21,10 @@
 </template>
 
 <script>
+import Notification from '../components/notification/Notification';
+
 export default {
+    components: { Notification },
     data() {
         return {
             items: this.getItems()
