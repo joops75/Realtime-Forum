@@ -9,8 +9,8 @@
             </template>
             <v-list>
                 <v-list-tile v-for="(unreadNotification, index) in unreadNotifications" :key="unreadNotification.id">
-                    <router-link :to="unreadNotification.data.question_path">
-                        <v-list-tile-title @click="markAsRead(unreadNotification, index)">{{ unreadNotification.data.question_title }}</v-list-tile-title>
+                    <router-link :to="unreadNotification.question_path">
+                        <v-list-tile-title @click="markAsRead(unreadNotification, index)">{{ unreadNotification.reply_by }} replied to {{ unreadNotification.question_title }}</v-list-tile-title>
                     </router-link>
                 </v-list-tile>
             </v-list>
@@ -29,6 +29,11 @@ export default {
     created() {
         if (User.loggedIn()) {
             this.getNotifications();
+
+            Echo.private('App.User.' + User.id())
+                .notification(notification => {
+                    this.unreadNotifications.unshift(notification);
+                });
         }
     },
     methods: {

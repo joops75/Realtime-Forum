@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Resources\NotificationResource;
 
 class NotificationController extends Controller
 {
     public function index() {
         return [
-            'readNotifications' => auth()->user()->readNotifications,
-            'unreadNotifications' => auth()->user()->unreadNotifications
+            'readNotifications' => NotificationResource::collection(auth()->user()->readNotifications),
+            'unreadNotifications' => NotificationResource::collection(auth()->user()->unreadNotifications)
         ];
     }
 

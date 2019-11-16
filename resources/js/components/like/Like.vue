@@ -17,6 +17,14 @@ export default {
             submittingLike: false
         }
     },
+    created() {
+        Echo.channel('likeChannel')
+            .listen('LikeEvent', e => {
+                if (this.reply.id === e.id) {
+                    e.type === 1 ? this.likes ++ : this.likes --;
+                }
+            });
+    },
     methods: {
         likeIt() {
             if (User.loggedIn() && !this.submittingLike) {

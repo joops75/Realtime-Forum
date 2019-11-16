@@ -46,9 +46,25 @@ export default {
         EventBus.$on('newReply', ({ reply }) => {
             this.replies.unshift(reply);
         });
+
         EventBus.$on('editedReply', ({ reply, index }) => {
             this.replies.splice(index, 1, reply);
         });
+
+        Echo.private('App.User.' + User.id())
+            .notification(notification => {
+                this.replies.unshift(notification.reply);
+            });
+            
+        Echo.channel('deleteReplyChannel')
+            .listen('DeleteReplyEvent', e => {
+                for (let i = 0; i < this.replies.length; i++) {
+                    if (this.replies[i].id == e.id) {
+                        this.replies.splice(i, 1);
+                        break;
+                    }
+                }
+            });
 
         if (!this.replyCount) {
             return;
