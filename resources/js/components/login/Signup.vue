@@ -56,7 +56,7 @@ export default {
     },
     created() {
         if (User.loggedIn()) {
-            this.$router.push('forum');
+            this.$router.push('/forum');
         }
     },
     methods: {
