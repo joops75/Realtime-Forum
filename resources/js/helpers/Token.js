@@ -10,7 +10,16 @@ class Token {
     }
 
     decode(payload) {
-        return JSON.parse(atob(payload)); // atob function decodes a string of data which has been encoded using base-64 encoding
+         // atob function decodes a string of data which has been encoded using base-64 encoding
+        return this.isBase64(payload) ? JSON.parse(atob(payload)) : false;
+    }
+
+    isBase64(str) {
+        try {
+            return btoa(atob(str)).replace(/=/g, '') === str; // btoa encodes a string to base-64 encoding
+        } catch(err) {
+            return false;
+        }
     }
 }
 

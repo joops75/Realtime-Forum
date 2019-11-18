@@ -1,6 +1,5 @@
 import Token from './Token';
 import AppStorage from './AppStorage';
-import { router } from '../router/router';
 
 class User {
     login(form) {
@@ -21,15 +20,16 @@ class User {
 
         if (Token.isValid(access_token)) {
             AppStorage.store(username, access_token);
-            window.axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-            router.push('/forum');
-            EventBus.$emit('login');
+            window.location = '/forum';
         }
     }
 
     hasToken() {
         const storedToken = AppStorage.getToken();
-        return storedToken && Token.isValid(storedToken);
+        if (storedToken) {
+            return Token.isValid(storedToken) ? true : this.logout();
+        }
+        return false;
     }
 
     loggedIn() {
@@ -38,8 +38,7 @@ class User {
 
     logout() {
         AppStorage.clear();
-        router.push('/forum');
-        EventBus.$emit('logout');
+        window.location = '/forum';
     }
 
     name() {

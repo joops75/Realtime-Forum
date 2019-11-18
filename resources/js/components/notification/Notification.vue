@@ -43,7 +43,7 @@ export default {
                     this.readNotifications = res.data.readNotifications;
                     this.unreadNotifications = res.data.unreadNotifications;
                 })
-                .catch(err => console.log(err.response.data));
+                .catch(err => Exception.handle(err));
         },
         markAsRead(notification, index) {
             axios.post('/api/notification', { id: notification.id })

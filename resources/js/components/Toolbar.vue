@@ -31,9 +31,7 @@ export default {
         }
     },
     created() {
-        EventBus.$on(['logout', 'login'], () => {
-            this.items = this.getItems();
-        });
+        this.items = this.getItems();
     },
     methods: {
         getItems() {

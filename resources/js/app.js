@@ -12,6 +12,9 @@ window.md = require('marked');
 import User from './helpers/User';
 window.User = User;
 
+import Exception from './helpers/Exception';
+window.Exception = Exception;
+
 window.EventBus = new Vue(); // create new Vue app just for events
 
 Vue.component('AppHome', require('./components/AppHome.vue').default); // rendered on resources/views/home.blade.php
