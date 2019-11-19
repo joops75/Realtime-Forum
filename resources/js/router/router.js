@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import HomePage from '../components/HomePage';
 import Loading from '../components/Loading';
 import Login from '../components/login/Login';
 import Logout from '../components/login/Logout';
@@ -11,6 +12,7 @@ import Category from '../components/category/Category';
 Vue.use(VueRouter);
 
 const routes = [
+    { path: '/', component: HomePage },
     { path: '/loading', component: Loading },
     { path: '/login', component: Login },
     { path: '/logout', component: Logout },

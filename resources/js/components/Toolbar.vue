@@ -1,7 +1,7 @@
 <template>
-    <v-toolbar>
+    <v-toolbar color="indigo" dark>
         <router-link to="/">
-            <v-toolbar-title>RT-Forum</v-toolbar-title>
+            <v-toolbar-title class="white--text">RT-Forum</v-toolbar-title>
         </router-link>
 
         <v-spacer></v-spacer>
