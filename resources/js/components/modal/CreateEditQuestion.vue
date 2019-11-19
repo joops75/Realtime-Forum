@@ -75,12 +75,12 @@ export default {
                     this.$router.push('/loading')
                         .then(() => this.$router.push(res.data.path));
                 })
-                .catch(err => console.log(err.response));
+                .catch(err => Exception.handle(err));
         },
         getCategories() {
             axios.get('/api/category')
                 .then(res => this.categories = res.data.data)
-                .catch(err => console.log(err.response.data));
+                .catch(err => Exception.handle(err));
         }
     }
 }

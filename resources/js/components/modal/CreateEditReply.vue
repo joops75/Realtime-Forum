@@ -76,7 +76,7 @@ export default {
                         EventBus.$emit('editedReply', { reply: res.data, index: this.replyIndex });
                     }
                 })
-                .catch(err => console.log(err.response));
+                .catch(err => Exception.handle(err));
         },
         getMd(text) {
             return md.parse(text);

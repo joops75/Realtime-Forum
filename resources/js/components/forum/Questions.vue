@@ -35,7 +35,7 @@ export default {
             .then(res => {
                 this.questions = res.data.data;
             })
-            .catch(err => console.log(err.response.data));
+            .catch(err => Exception.handle(err));
     }
 }
 </script>

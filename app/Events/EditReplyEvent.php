@@ -10,22 +10,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DeleteReplyEvent implements ShouldBroadcast
+class EditReplyEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $question_id;
-    public $id;
+    public $reply;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($question_id, $id)
+    public function __construct($reply)
     {
-        $this->question_id = $question_id;
-        $this->id = $id;
+        $this->reply = $reply;
     }
 
     /**
@@ -35,6 +33,6 @@ class DeleteReplyEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('deleteReplyChannel');
+        return new Channel('editReplyChannel');
     }
 }

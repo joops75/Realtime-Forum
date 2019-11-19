@@ -1918,11 +1918,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    var _this = this;
-
-    EventBus.$on(['logout', 'login'], function () {
-      _this.items = _this.getItems();
-    });
+    this.items = this.getItems();
   },
   methods: {
     getItems: function getItems() {
@@ -2041,7 +2037,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/category').then(function (res) {
       return _this.categories = res.data.data;
     })["catch"](function (err) {
-      return console.log(err.response.data);
+      return Exception.handle(err);
     });
   },
   methods: {
@@ -2062,7 +2058,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.setData();
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       });
     },
     editCategory: function editCategory() {
@@ -2079,7 +2075,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.setData();
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       });
     },
     destroy: function destroy(slug, index) {
@@ -2088,7 +2084,7 @@ __webpack_require__.r(__webpack_exports__);
       axios["delete"]("/api/category/".concat(slug)).then(function (res) {
         return _this4.categories.splice(index, 1);
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       });
     },
     cancelEdit: function cancelEdit() {
@@ -2146,7 +2142,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/category').then(function (res) {
       return _this.categories = res.data.data;
     })["catch"](function (err) {
-      return console.log(err.response.data);
+      return Exception.handle(err);
     });
   }
 });
@@ -2240,6 +2236,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2249,16 +2246,33 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      question: null
+      question: null,
+      liveReplyCount: 0
     };
   },
   created: function created() {
     var _this = this;
 
+    EventBus.$on('newReply', function () {
+      _this.liveReplyCount++;
+    });
+    EventBus.$on('replyDeleted', function () {
+      _this.liveReplyCount--;
+    });
+    Echo.channel('addReplyChannel').listen('AddReplyEvent', function (e) {
+      if (_this.question.id == e.question_id) {
+        _this.liveReplyCount++;
+      }
+    });
+    Echo.channel('deleteReplyChannel').listen('DeleteReplyEvent', function (e) {
+      if (_this.question.id == e.question_id) {
+        _this.liveReplyCount--;
+      }
+    });
     axios.get("/api/question/".concat(this.$route.params.slug)).then(function (res) {
       return _this.question = res.data.data;
     })["catch"](function (err) {
-      return console.log(err.response.data);
+      return Exception.handle(err);
     });
   },
   computed: {
@@ -2270,6 +2284,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     loggedIn: function loggedIn() {
       return User.loggedIn();
+    },
+    replyCount: function replyCount() {
+      return this.question.reply_count + this.liveReplyCount;
     }
   },
   methods: {
@@ -2279,7 +2296,7 @@ __webpack_require__.r(__webpack_exports__);
       axios["delete"]("/api/question/".concat(this.question.slug)).then(function () {
         return _this2.$router.push('/forum');
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       });
     },
     showQuestionModal: function showQuestionModal() {
@@ -2341,7 +2358,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/question').then(function (res) {
       _this.questions = res.data.data;
     })["catch"](function (err) {
-      return console.log(err.response.data);
+      return Exception.handle(err);
     });
   }
 });
@@ -2398,7 +2415,7 @@ __webpack_require__.r(__webpack_exports__);
         _this2.likes--;
         _this2.liked = false;
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       })["finally"](function () {
         return _this2.submittingLike = false;
       });
@@ -2410,7 +2427,7 @@ __webpack_require__.r(__webpack_exports__);
         _this3.likes++;
         _this3.liked = true;
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       })["finally"](function () {
         return _this3.submittingLike = false;
       });
@@ -2481,7 +2498,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   created: function created() {
     if (User.loggedIn()) {
-      this.$router.push('forum');
+      this.$router.push('/forum');
     }
   },
   methods: {
@@ -2620,7 +2637,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   created: function created() {
     if (User.loggedIn()) {
-      this.$router.push('forum');
+      this.$router.push('/forum');
     }
   },
   methods: {
@@ -2756,7 +2773,7 @@ __webpack_require__.r(__webpack_exports__);
           return _this2.$router.push(res.data.path);
         });
       })["catch"](function (err) {
-        return console.log(err.response);
+        return Exception.handle(err);
       });
     },
     getCategories: function getCategories() {
@@ -2765,7 +2782,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('/api/category').then(function (res) {
         return _this3.categories = res.data.data;
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       });
     }
   }
@@ -2877,7 +2894,7 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       })["catch"](function (err) {
-        return console.log(err.response);
+        return Exception.handle(err);
       });
     },
     getMd: function getMd(text) {
@@ -2942,7 +2959,7 @@ __webpack_require__.r(__webpack_exports__);
         _this2.readNotifications = res.data.readNotifications;
         _this2.unreadNotifications = res.data.unreadNotifications;
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       });
     },
     markAsRead: function markAsRead(notification, index) {
@@ -2955,7 +2972,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.readNotifications.unshift(notification);
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       });
     }
   }
@@ -3031,8 +3048,18 @@ __webpack_require__.r(__webpack_exports__);
 
       _this.replies.splice(index, 1, reply);
     });
-    Echo["private"]('App.User.' + User.id()).notification(function (notification) {
-      _this.replies.unshift(notification.reply);
+    Echo.channel('addReplyChannel').listen('AddReplyEvent', function (e) {
+      if (_this.question.id == e.question_id) {
+        _this.replies.unshift(e.reply);
+      }
+    });
+    Echo.channel('editReplyChannel').listen('EditReplyEvent', function (e) {
+      for (var i = 0; i < _this.replies.length; i++) {
+        if (_this.replies[i].id == e.reply.id) {
+          // this.replies[i] = e.reply; // cannot use this method as it is not reactive (no Vue update occurs)
+          _this.replies.splice(i, 1, e.reply);
+        }
+      }
     });
     Echo.channel('deleteReplyChannel').listen('DeleteReplyEvent', function (e) {
       for (var i = 0; i < _this.replies.length; i++) {
@@ -3051,7 +3078,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get("/api/question/".concat(this.question.slug, "/reply")).then(function (res) {
       return _this.replies = res.data.data;
     })["catch"](function (err) {
-      return console.log(err.response.data);
+      return Exception.handle(err);
     });
   },
   methods: {
@@ -3072,9 +3099,11 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       axios["delete"]("/api/question/".concat(this.question.slug, "/reply/").concat(replyId)).then(function (res) {
-        return _this2.replies.splice(replyIndex, 1);
+        _this2.replies.splice(replyIndex, 1);
+
+        EventBus.$emit('replyDeleted');
       })["catch"](function (err) {
-        return console.log(err.response.data);
+        return Exception.handle(err);
       });
     }
   }
@@ -49348,11 +49377,7 @@ var render = function() {
                           _c(
                             "v-card-text",
                             { staticClass: "font-weight-bold white--text" },
-                            [
-                              _vm._v(
-                                _vm._s(_vm.question.reply_count) + " replies"
-                              )
-                            ]
+                            [_vm._v(_vm._s(_vm.replyCount) + " replies")]
                           )
                         ],
                         1
@@ -49377,7 +49402,16 @@ var render = function() {
                             },
                             [_vm._v("Reply")]
                           )
-                        : _vm._e(),
+                        : _c(
+                            "router-link",
+                            { attrs: { to: "/login" } },
+                            [
+                              _c("v-btn", { attrs: { color: "green" } }, [
+                                _vm._v("Login to Reply")
+                              ])
+                            ],
+                            1
+                          ),
                       _vm._v(" "),
                       _vm.canEdit
                         ? _c(
@@ -49420,10 +49454,7 @@ var render = function() {
           _c("v-spacer"),
           _vm._v(" "),
           _c("Replies", {
-            attrs: {
-              question: _vm.question,
-              replyCount: _vm.question.reply_count
-            }
+            attrs: { question: _vm.question, replyCount: _vm.replyCount }
           }),
           _vm._v(" "),
           _c("CreateEditReply")
@@ -91393,7 +91424,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuetify__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var vue_simplemde__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-simplemde */ "./node_modules/vue-simplemde/src/index.vue");
 /* harmony import */ var _helpers_User__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./helpers/User */ "./resources/js/helpers/User.js");
-/* harmony import */ var _router_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./router/router */ "./resources/js/router/router.js");
+/* harmony import */ var _helpers_Exception__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./helpers/Exception */ "./resources/js/helpers/Exception.js");
+/* harmony import */ var _router_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./router/router */ "./resources/js/router/router.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
@@ -91404,6 +91436,8 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('vue-simplemde', vue_simple
 window.md = __webpack_require__(/*! marked */ "./node_modules/marked/lib/marked.js");
 
 window.User = _helpers_User__WEBPACK_IMPORTED_MODULE_3__["default"];
+
+window.Exception = _helpers_Exception__WEBPACK_IMPORTED_MODULE_4__["default"];
 window.EventBus = new vue__WEBPACK_IMPORTED_MODULE_0___default.a(); // create new Vue app just for events
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('AppHome', __webpack_require__(/*! ./components/AppHome.vue */ "./resources/js/components/AppHome.vue")["default"]); // rendered on resources/views/home.blade.php
@@ -91411,7 +91445,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('AppHome', __webpack_requir
 
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
-  router: _router_router__WEBPACK_IMPORTED_MODULE_4__["router"]
+  router: _router_router__WEBPACK_IMPORTED_MODULE_5__["router"]
 });
 
 /***/ }),
@@ -92663,6 +92697,54 @@ function () {
 
 /***/ }),
 
+/***/ "./resources/js/helpers/Exception.js":
+/*!*******************************************!*\
+  !*** ./resources/js/helpers/Exception.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _User__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./User */ "./resources/js/helpers/User.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Exception =
+/*#__PURE__*/
+function () {
+  function Exception() {
+    _classCallCheck(this, Exception);
+  }
+
+  _createClass(Exception, [{
+    key: "handle",
+    value: function handle(err) {
+      this.isExpired(err.response.data);
+    }
+  }, {
+    key: "isExpired",
+    value: function isExpired(_ref) {
+      var error = _ref.error;
+
+      if (error && error.slice(0, 5) === 'Token') {
+        _User__WEBPACK_IMPORTED_MODULE_0__["default"].logout();
+      }
+    }
+  }]);
+
+  return Exception;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (Exception = new Exception());
+
+/***/ }),
+
 /***/ "./resources/js/helpers/Token.js":
 /*!***************************************!*\
   !*** ./resources/js/helpers/Token.js ***!
@@ -92700,7 +92782,17 @@ function () {
   }, {
     key: "decode",
     value: function decode(payload) {
-      return JSON.parse(atob(payload)); // atob function decodes a string of data which has been encoded using base-64 encoding
+      // atob function decodes a string of data which has been encoded using base-64 encoding
+      return this.isBase64(payload) ? JSON.parse(atob(payload)) : false;
+    }
+  }, {
+    key: "isBase64",
+    value: function isBase64(str) {
+      try {
+        return btoa(atob(str)).replace(/=/g, '') === str; // btoa encodes a string to base-64 encoding
+      } catch (err) {
+        return false;
+      }
     }
   }]);
 
@@ -92722,13 +92814,11 @@ function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Token__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Token */ "./resources/js/helpers/Token.js");
 /* harmony import */ var _AppStorage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AppStorage */ "./resources/js/helpers/AppStorage.js");
-/* harmony import */ var _router_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../router/router */ "./resources/js/router/router.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
 
 
 
@@ -92770,16 +92860,19 @@ function () {
 
       if (_Token__WEBPACK_IMPORTED_MODULE_0__["default"].isValid(access_token)) {
         _AppStorage__WEBPACK_IMPORTED_MODULE_1__["default"].store(username, access_token);
-        window.axios.defaults.headers.common['Authorization'] = "Bearer ".concat(access_token);
-        _router_router__WEBPACK_IMPORTED_MODULE_2__["router"].push('/forum');
-        EventBus.$emit('login');
+        window.location = '/forum';
       }
     }
   }, {
     key: "hasToken",
     value: function hasToken() {
       var storedToken = _AppStorage__WEBPACK_IMPORTED_MODULE_1__["default"].getToken();
-      return storedToken && _Token__WEBPACK_IMPORTED_MODULE_0__["default"].isValid(storedToken);
+
+      if (storedToken) {
+        return _Token__WEBPACK_IMPORTED_MODULE_0__["default"].isValid(storedToken) ? true : this.logout();
+      }
+
+      return false;
     }
   }, {
     key: "loggedIn",
@@ -92790,8 +92883,7 @@ function () {
     key: "logout",
     value: function logout() {
       _AppStorage__WEBPACK_IMPORTED_MODULE_1__["default"].clear();
-      _router_router__WEBPACK_IMPORTED_MODULE_2__["router"].push('/forum');
-      EventBus.$emit('logout');
+      window.location = '/forum';
     }
   }, {
     key: "name",

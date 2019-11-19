@@ -8,7 +8,9 @@ use App\Model\Question;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\ReplyResource;
 use App\Notifications\NewReply;
+use App\Events\AddReplyEvent;
 use App\Events\DeleteReplyEvent;
+use App\Events\EditReplyEvent;
 
 class ReplyController extends Controller
 {
@@ -46,6 +48,8 @@ class ReplyController extends Controller
             $question->user->notify(new NewReply($reply));
         }
 
+        broadcast(new AddReplyEvent($question->id, new ReplyResource($reply)))->toOthers();
+
         return response(new ReplyResource($reply), Response::HTTP_CREATED);
     }
 
@@ -70,6 +74,9 @@ class ReplyController extends Controller
     public function update(Request $request, Question $question, Reply $reply)
     {
         $reply->update($request->all());
+
+        broadcast(new editReplyEvent(new ReplyResource($reply)))->toOthers();
+
         return response(new ReplyResource($reply), Response::HTTP_ACCEPTED);
     }
 
@@ -83,7 +90,7 @@ class ReplyController extends Controller
     {
         $reply->delete();
 
-        broadcast(new DeleteReplyEvent($reply->id))->toOthers();
+        broadcast(new DeleteReplyEvent($question->id, $reply->id))->toOthers();
 
         return response(null, Response::HTTP_NO_CONTENT);
     }

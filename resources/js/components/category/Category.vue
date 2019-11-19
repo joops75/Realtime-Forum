@@ -69,7 +69,7 @@ export default {
         
         axios.get('/api/category')
             .then(res => this.categories = res.data.data)
-            .catch(err => console.log(err.response.data));
+            .catch(err => Exception.handle(err));
     },
     methods: {
         handleSubmit() {
@@ -85,7 +85,7 @@ export default {
                     this.categories.unshift(res.data);
                     this.setData();
                 })
-                .catch(err => console.log(err.response.data));
+                .catch(err => Exception.handle(err));
         },
         editCategory() {
             if (!this.name) {
@@ -97,12 +97,12 @@ export default {
                     this.categories[this.index] = res.data;
                     this.setData();
                 })
-                .catch(err => console.log(err.response.data));
+                .catch(err => Exception.handle(err));
         },
         destroy(slug, index) {
             axios.delete(`/api/category/${slug}`)
                 .then(res => this.categories.splice(index, 1))
-                .catch(err => console.log(err.response.data));
+                .catch(err => Exception.handle(err));
         },
         cancelEdit() {
             this.setData();

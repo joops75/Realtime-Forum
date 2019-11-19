@@ -51,7 +51,7 @@ export default {
                     this.unreadNotifications.splice(index, 1);
                     this.readNotifications.unshift(notification);
                 })
-                .catch(err => console.log(err.response.data));
+                .catch(err => Exception.handle(err));
         }
     }
 }

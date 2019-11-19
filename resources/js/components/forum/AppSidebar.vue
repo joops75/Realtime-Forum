@@ -24,7 +24,7 @@ export default {
     created() {
         axios.get('/api/category')
             .then(res => this.categories = res.data.data)
-            .catch(err => console.log(err.response.data));
+            .catch(err => Exception.handle(err));
     }
 }
 </script>

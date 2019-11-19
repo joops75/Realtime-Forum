@@ -50,10 +50,22 @@ export default {
         EventBus.$on('editedReply', ({ reply, index }) => {
             this.replies.splice(index, 1, reply);
         });
-
-        Echo.private('App.User.' + User.id())
-            .notification(notification => {
-                this.replies.unshift(notification.reply);
+            
+        Echo.channel('addReplyChannel')
+            .listen('AddReplyEvent', e => {
+                if (this.question.id == e.question_id) {
+                    this.replies.unshift(e.reply);
+                }
+            });
+            
+        Echo.channel('editReplyChannel')
+            .listen('EditReplyEvent', e => {
+                for (let i = 0; i < this.replies.length; i++) {
+                    if (this.replies[i].id == e.reply.id) {
+                        // this.replies[i] = e.reply; // cannot use this method as it is not reactive (no Vue update occurs)
+                        this.replies.splice(i, 1, e.reply);
+                    }
+                }
             });
             
         Echo.channel('deleteReplyChannel')
@@ -72,7 +84,7 @@ export default {
 
         axios.get(`/api/question/${this.question.slug}/reply`)
             .then(res => this.replies = res.data.data)
-            .catch(err => console.log(err.response.data));
+            .catch(err => Exception.handle(err));
     },
     methods: {
         body(text) {
@@ -86,8 +98,11 @@ export default {
         },
         destroy(replyId, replyIndex) {
             axios.delete(`/api/question/${this.question.slug}/reply/${replyId}`)
-                .then(res => this.replies.splice(replyIndex, 1))
-                .catch(err => console.log(err.response.data));
+                .then(res => {
+                    this.replies.splice(replyIndex, 1);
+                    EventBus.$emit('replyDeleted');
+                })
+                .catch(err => Exception.handle(err));
         }
     }
 }

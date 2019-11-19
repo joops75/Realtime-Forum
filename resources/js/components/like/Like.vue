@@ -38,7 +38,7 @@ export default {
                     this.likes --;
                     this.liked = false;
                 })
-                .catch(err => console.log(err.response.data))
+                .catch(err => Exception.handle(err))
                 .finally(() => this.submittingLike = false);
         },
         addLike() {
@@ -47,7 +47,7 @@ export default {
                     this.likes ++;
                     this.liked = true;
                 })
-                .catch(err => console.log(err.response.data))
+                .catch(err => Exception.handle(err))
                 .finally(() => this.submittingLike = false);
         }
     },
