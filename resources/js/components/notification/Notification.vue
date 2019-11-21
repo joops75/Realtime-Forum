@@ -23,7 +23,8 @@ export default {
     data() {
         return {
             readNotifications: [],
-            unreadNotifications: []
+            unreadNotifications: [],
+            sound: require('../sound/glass_ping.mp3')
         }
     },
     created() {
@@ -33,6 +34,7 @@ export default {
             Echo.private('App.User.' + User.id())
                 .notification(notification => {
                     this.unreadNotifications.unshift(notification);
+                    this.playSound();
                 });
         }
     },
@@ -52,6 +54,11 @@ export default {
                     this.readNotifications.unshift(notification);
                 })
                 .catch(err => Exception.handle(err));
+        },
+        playSound() {
+            const sound = new Audio(this.sound);
+            // ensure website permits audio play
+            sound.play();
         }
     }
 }

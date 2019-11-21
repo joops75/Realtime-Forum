@@ -2965,7 +2965,8 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       readNotifications: [],
-      unreadNotifications: []
+      unreadNotifications: [],
+      sound: __webpack_require__(/*! ../sound/glass_ping.mp3 */ "./resources/js/components/sound/glass_ping.mp3")
     };
   },
   created: function created() {
@@ -2975,6 +2976,8 @@ __webpack_require__.r(__webpack_exports__);
       this.getNotifications();
       Echo["private"]('App.User.' + User.id()).notification(function (notification) {
         _this.unreadNotifications.unshift(notification);
+
+        _this.playSound();
       });
     }
   },
@@ -3001,6 +3004,11 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (err) {
         return Exception.handle(err);
       });
+    },
+    playSound: function playSound() {
+      var sound = new Audio(this.sound); // ensure website permits audio play
+
+      sound.play();
     }
   }
 });
@@ -92794,6 +92802,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Replies_vue_vue_type_template_id_50be1df0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
+
+/***/ }),
+
+/***/ "./resources/js/components/sound/glass_ping.mp3":
+/*!******************************************************!*\
+  !*** ./resources/js/components/sound/glass_ping.mp3 ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "b9823fac1ec92afc1c30423a041eb3e1.mp3";
 
 /***/ }),
 
