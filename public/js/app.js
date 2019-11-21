@@ -2018,13 +2018,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       name: null,
       slug: null,
       index: null,
-      categories: []
+      categories: [],
+      errors: {}
     };
   },
   created: function created() {
@@ -2042,14 +2047,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     handleSubmit: function handleSubmit() {
+      this.errors = {};
       this.slug ? this.editCategory() : this.createCategory();
     },
     createCategory: function createCategory() {
       var _this2 = this;
-
-      if (!this.name) {
-        return;
-      }
 
       axios.post('/api/category', {
         name: this.name
@@ -2058,15 +2060,17 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.setData();
       })["catch"](function (err) {
-        return Exception.handle(err);
+        var errors = err.response.data.errors;
+
+        if (errors) {
+          _this2.errors = errors;
+        }
+
+        Exception.handle(err);
       });
     },
     editCategory: function editCategory() {
       var _this3 = this;
-
-      if (!this.name) {
-        return;
-      }
 
       axios.put("/api/category/".concat(this.slug), {
         name: this.name
@@ -2075,12 +2079,19 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.setData();
       })["catch"](function (err) {
-        return Exception.handle(err);
+        var errors = err.response.data.errors;
+
+        if (errors) {
+          _this3.errors = errors;
+        }
+
+        Exception.handle(err);
       });
     },
     destroy: function destroy(slug, index) {
       var _this4 = this;
 
+      this.errors = {};
       axios["delete"]("/api/category/".concat(slug)).then(function (res) {
         return _this4.categories.splice(index, 1);
       })["catch"](function (err) {
@@ -2091,6 +2102,7 @@ __webpack_require__.r(__webpack_exports__);
       this.setData();
     },
     setData: function setData(name, slug, index) {
+      this.errors = {};
       this.name = name || null;
       this.slug = slug || null;
       this.index = index === undefined ? null : index;
@@ -2735,6 +2747,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2742,7 +2757,7 @@ __webpack_require__.r(__webpack_exports__);
       dialog: false,
       mode: 'Create',
       categories: [],
-      error: null
+      errors: {}
     };
   },
   created: function created() {
@@ -2762,6 +2777,7 @@ __webpack_require__.r(__webpack_exports__);
     handleSubmit: function handleSubmit() {
       var _this2 = this;
 
+      this.errors = {};
       axios({
         method: this.mode === 'Create' ? 'post' : 'put',
         url: this.mode === 'Create' ? '/api/question' : "/api/question/".concat(this.question.slug),
@@ -2773,7 +2789,13 @@ __webpack_require__.r(__webpack_exports__);
           return _this2.$router.push(res.data.path);
         });
       })["catch"](function (err) {
-        return Exception.handle(err);
+        var errors = err.response.data.errors;
+
+        if (errors) {
+          _this2.errors = errors;
+        }
+
+        Exception.handle(err);
       });
     },
     getCategories: function getCategories() {
@@ -2784,6 +2806,11 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (err) {
         return Exception.handle(err);
       });
+    }
+  },
+  computed: {
+    isValid: function isValid() {
+      return this.question.title && this.question.body && this.question.category_id;
     }
   }
 });
@@ -49129,6 +49156,12 @@ var render = function() {
   return _c(
     "v-container",
     [
+      _vm.errors.name
+        ? _c("v-alert", { attrs: { value: true, type: "error" } }, [
+            _vm._v("\n        " + _vm._s(_vm.errors.name[0]) + "\n    ")
+          ])
+        : _vm._e(),
+      _vm._v(" "),
       _c(
         "v-form",
         {
@@ -49151,9 +49184,11 @@ var render = function() {
             }
           }),
           _vm._v(" "),
-          _c("v-btn", { attrs: { color: "teal", type: "submit" } }, [
-            _vm._v(_vm._s(_vm.mode) + " Category")
-          ]),
+          _c(
+            "v-btn",
+            { attrs: { color: "teal", type: "submit", disabled: !_vm.name } },
+            [_vm._v(_vm._s(_vm.mode) + " Category")]
+          ),
           _vm._v(" "),
           _vm.slug
             ? _c("v-btn", { on: { click: _vm.cancelEdit } }, [
@@ -49911,6 +49946,12 @@ var render = function() {
                   }
                 },
                 [
+                  _vm.errors.title
+                    ? _c("span", { staticClass: "red--text" }, [
+                        _vm._v(_vm._s(_vm.errors.title[0]))
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c("v-text-field", {
                     attrs: { label: "Title", type: "text", required: "" },
                     model: {
@@ -49921,6 +49962,12 @@ var render = function() {
                       expression: "question.title"
                     }
                   }),
+                  _vm._v(" "),
+                  _vm.errors.category_id
+                    ? _c("span", { staticClass: "red--text" }, [
+                        _vm._v(_vm._s(_vm.errors.category_id[0]))
+                      ])
+                    : _vm._e(),
                   _vm._v(" "),
                   _c("v-autocomplete", {
                     attrs: {
@@ -49939,6 +49986,12 @@ var render = function() {
                     }
                   }),
                   _vm._v(" "),
+                  _vm.errors.body
+                    ? _c("span", { staticClass: "red--text" }, [
+                        _vm._v(_vm._s(_vm.errors.body[0]))
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c("vue-simplemde", {
                     model: {
                       value: _vm.question.body,
@@ -49954,7 +50007,13 @@ var render = function() {
                     [
                       _c(
                         "v-btn",
-                        { attrs: { icon: "", type: "submit" } },
+                        {
+                          attrs: {
+                            icon: "",
+                            type: "submit",
+                            disabled: !_vm.isValid
+                          }
+                        },
                         [
                           _c("v-icon", { attrs: { color: "teal" } }, [
                             _vm._v("save")
@@ -92987,7 +93046,7 @@ function () {
     key: "logout",
     value: function logout() {
       _AppStorage__WEBPACK_IMPORTED_MODULE_1__["default"].clear();
-      window.location = '/forum';
+      window.location = '/';
     }
   }, {
     key: "name",

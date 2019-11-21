@@ -10,6 +10,7 @@
                     <div class="headline">{{ mode }} Question</div>
                 </v-card-title>
                 <v-form @submit.prevent="handleSubmit">
+                    <span v-if="errors.title" class="red--text">{{ errors.title[0] }}</span>
                     <v-text-field
                         label="Title"
                         v-model="question.title"
@@ -17,6 +18,7 @@
                         required
                     ></v-text-field>
 
+                    <span v-if="errors.category_id" class="red--text">{{ errors.category_id[0] }}</span>
                     <v-autocomplete
                         :items="categories"
                         item-text="name"
@@ -26,10 +28,11 @@
                         label="Category"
                     ></v-autocomplete>
 
+                    <span v-if="errors.body" class="red--text">{{ errors.body[0] }}</span>
                     <vue-simplemde v-model="question.body" />
                     
                     <v-card-actions>
-                        <v-btn icon type="submit">
+                        <v-btn icon type="submit" :disabled="!isValid">
                             <v-icon color="teal">save</v-icon>
                         </v-btn>
                         
@@ -51,7 +54,7 @@ export default {
             dialog: false,
             mode: 'Create',
             categories: [],
-            error: null
+            errors: {}
         }
     },
     created() {
@@ -64,6 +67,7 @@ export default {
     },
     methods: {
         handleSubmit() {
+            this.errors = {};
             axios({
                 method: this.mode === 'Create' ? 'post' : 'put',
                 url: this.mode === 'Create' ? '/api/question' : `/api/question/${this.question.slug}`,
@@ -75,12 +79,23 @@ export default {
                     this.$router.push('/loading')
                         .then(() => this.$router.push(res.data.path));
                 })
-                .catch(err => Exception.handle(err));
+                .catch(err => {
+                    const { errors } = err.response.data;
+                    if (errors) {
+                        this.errors = errors;
+                    }
+                    Exception.handle(err)
+                });
         },
         getCategories() {
             axios.get('/api/category')
                 .then(res => this.categories = res.data.data)
                 .catch(err => Exception.handle(err));
+        }
+    },
+    computed: {
+        isValid() {
+            return this.question.title && this.question.body && this.question.category_id;
         }
     }
 }

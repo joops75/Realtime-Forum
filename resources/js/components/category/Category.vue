@@ -1,5 +1,8 @@
 <template>
     <v-container>
+        <v-alert v-if="errors.name" :value="true" type="error">
+            {{ errors.name[0] }}
+        </v-alert>
         <v-form @submit.prevent="handleSubmit">
 
             <v-text-field
@@ -12,6 +15,7 @@
             <v-btn
                 color="teal"
                 type="submit"
+                :disabled="!name"
             >{{ mode }} Category</v-btn>
 
             <v-btn
@@ -59,7 +63,8 @@ export default {
             name: null,
             slug: null,
             index: null,
-            categories: []
+            categories: [],
+            errors: {}
         }
     },
     created() {
@@ -73,33 +78,39 @@ export default {
     },
     methods: {
         handleSubmit() {
+            this.errors = {};
             this.slug ? this.editCategory() : this.createCategory();
         },
         createCategory() {
-            if (!this.name) {
-                return;
-            }
-
             axios.post('/api/category', { name: this.name })
                 .then(res => {
                     this.categories.unshift(res.data);
                     this.setData();
                 })
-                .catch(err => Exception.handle(err));
+                .catch(err => {
+                    const { errors } = err.response.data;
+                    if (errors) {
+                        this.errors = errors;
+                    }
+                    Exception.handle(err)
+                });
         },
         editCategory() {
-            if (!this.name) {
-                return;
-            }
-
             axios.put(`/api/category/${this.slug}`, { name: this.name })
                 .then(res => {
                     this.categories[this.index] = res.data;
                     this.setData();
                 })
-                .catch(err => Exception.handle(err));
+                .catch(err => {
+                    const { errors } = err.response.data;
+                    if (errors) {
+                        this.errors = errors;
+                    }
+                    Exception.handle(err)
+                });
         },
         destroy(slug, index) {
+            this.errors = {};
             axios.delete(`/api/category/${slug}`)
                 .then(res => this.categories.splice(index, 1))
                 .catch(err => Exception.handle(err));
@@ -108,6 +119,7 @@ export default {
             this.setData();
         },
         setData(name, slug, index) {
+            this.errors = {};
             this.name = name || null;
             this.slug = slug || null;
             this.index = index === undefined ? null : index;
