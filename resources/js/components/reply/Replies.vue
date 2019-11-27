@@ -28,23 +28,29 @@
                     </v-card-actions>
                 </div>
         </v-card>
+
+        <Pagination :getPage="getPage" :currentPage="pagination.current_page" :lastPage="pagination.last_page" />
     </v-container>
 </template>
 
 <script>
 import Like from '../like/Like';
+import Pagination from '../pagination/Pagination';
 
 export default {
-    components: { Like },
+    components: { Like, Pagination },
     props: ['question', 'replyCount'],
     data() {
         return {
-            replies: []
+            replies: [],
+            pagination: { current_page: 1 }
         }
     },
     created() {
         EventBus.$on('newReply', ({ reply }) => {
-            this.replies.unshift(reply);
+            if (this.pagination.current_page == 1) {
+                this.replies.unshift(reply);
+            }
         });
 
         EventBus.$on('editedReply', ({ reply, index }) => {
@@ -53,7 +59,7 @@ export default {
             
         Echo.channel('addReplyChannel')
             .listen('AddReplyEvent', e => {
-                if (this.question.id == e.question_id) {
+                if (this.question.id == e.question_id && this.pagination.current_page == 1) {
                     this.replies.unshift(e.reply);
                 }
             });
@@ -64,6 +70,7 @@ export default {
                     if (this.replies[i].id == e.reply.id) {
                         // this.replies[i] = e.reply; // cannot use this method as it is not reactive (no Vue update occurs)
                         this.replies.splice(i, 1, e.reply);
+                        break;
                     }
                 }
             });
@@ -78,15 +85,19 @@ export default {
                 }
             });
 
-        if (!this.replyCount) {
-            return;
+        if (this.replyCount) {
+            this.getPage(this.pagination.current_page);
         }
-
-        axios.get(`/api/question/${this.question.slug}/reply`)
-            .then(res => this.replies = res.data.data)
-            .catch(err => Exception.handle(err));
     },
     methods: {
+        getPage(requestedPage) {
+            axios.get(`/api/question/${this.question.slug}/reply?page=${requestedPage}`)
+                .then(res => {
+                    this.replies = res.data.data;
+                    this.pagination = res.data.meta;
+                })
+                .catch(err => Exception.handle(err));
+        },
         body(text) {
             return md.parse(text);
         },

@@ -20,22 +20,34 @@
 
             <v-card-text>{{ question.body }}</v-card-text>
         </v-card>
+
+        <Pagination :getPage="getPage" :currentPage="pagination.current_page" :lastPage="pagination.last_page" />
     </div>
 </template>
 
 <script>
+import Pagination from '../pagination/Pagination';
+
 export default {
+    components: { Pagination },
     data() {
         return {
-            questions: []
+            questions: [],
+            pagination: { current_page: 1 }
         }
     },
     created() {
-        axios.get('/api/question')
-            .then(res => {
-                this.questions = res.data.data;
-            })
-            .catch(err => Exception.handle(err));
+        this.getPage(this.pagination.current_page);
+    },
+    methods: {
+        getPage(requestedPage) {
+            axios.get(`/api/question?page=${requestedPage}`)
+                .then(res => {
+                    this.questions = res.data.data;
+                    this.pagination = res.data.meta;
+                })
+                .catch(err => Exception.handle(err));
+            }
     }
 }
 </script>
